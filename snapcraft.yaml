@@ -47,27 +47,28 @@ plugs:
     name: org_lemon-studios_audio-replacer.SingleInstance
 
 parts:
-  build-app:
-    plugin: dump
-  build-snaps:
-    - node/24/stable
-    - rustup/latest/stable
-  build-packages:
-    - libwebkit2gtk-4.1-dev
-    - build-essential
-    - librsvg2-dev
-    - dpkg
-    - cmake
-    - llvm
-    - clang
-    - libayatana-appindicator3-dev
-  stage-packages:
-    - libwebkit2gtk-4.1-0
-    - libayatana-appindicator3-1
-  source: .
-  override-build: |
-    set -eu
-    npm i
-    npm run tauri build -- --bundles deb
-    dpkg -x src-tauri/target/release/bundle/deb/*.deb $SNAPCRAFT_PART_INSTALL/
+  audio-replacer:
+    build-app:
+      plugin: dump
+    build-snaps:
+      - node/24/stable
+      - rustup/latest/stable
+    build-packages:
+      - libwebkit2gtk-4.1-dev
+      - build-essential
+      - librsvg2-dev
+      - dpkg
+      - cmake
+      - llvm
+      - clang
+      - libayatana-appindicator3-dev
+    stage-packages:
+      - libwebkit2gtk-4.1-0
+      - libayatana-appindicator3-1
+    source: .
+    override-build: |
+      set -eu
+      npm i
+      npm run tauri build -- --bundles deb
+      dpkg -x src-tauri/target/release/bundle/deb/*.deb $SNAPCRAFT_PART_INSTALL/
 
