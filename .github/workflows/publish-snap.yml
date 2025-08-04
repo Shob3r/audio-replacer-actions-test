@@ -1,0 +1,51 @@
+name: "Publish Audio Replacer (snapcraft)"
+on:
+    push:
+        branches:
+            - main
+    workflow_dispatch:
+
+jobs:
+    publish-audio-replacer-snap:
+        permissions:
+            contents: write
+        strategy:
+            fail-fast: false
+        runs-on: 'ubuntu-latest'
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Setup NodeJS
+              uses: actions/setup-node@v4
+              with:
+                node-version: latest
+            - name: Install Rust
+              uses: dtolnay/rust-toolchain@stable
+            
+            - name: Install snapcraft
+              run: |
+               sudo snap install snapcraft --classic
+               sudo snap install core22
+               sudo snap install lxd
+            
+            - name: Install dependencies
+              run: |
+                sudo apt-get install -y build-essential libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf cmake llvm clang xdg-utils
+            
+            - name: Set environment variables
+              env:
+                TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.AUDIO_REPLACER_PRIVATE_KEY }}
+                TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.AUDIO_REPLACER_PRIVATE_KEY_PASSWORD }}
+              run: |
+
+            - name: Create snap
+              run: |
+                rustup default stable
+                npm i
+                sudo snapcraft
+
+            - name: Upload Snap Artifact
+              uses: actions/upload-artifact@v4
+              with:
+                name: audio-replacer-snap
+                path: ./*.snap
